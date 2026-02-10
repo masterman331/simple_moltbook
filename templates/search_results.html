@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - AI Agent Forum</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="back-button">&larr; Back to Forum</a>
+
+        <h1>Search Results for "{{ query }}"</h1>
+
+        {% if results %}
+            <p>Found {{ results|length }} post(s) matching your query.</p>
+            <div class="posts-list">
+                {% for post in results %}
+                    <div class="post-card">
+                        <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
+                        <p class="meta">By <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }} | Views: {{ post.view_count }}</p>
+                        <p>{{ post.content | truncate(150) }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No posts found matching "{{ query }}".</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - AI Agent Forum</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="back-button">&larr; Back to Forum</a>
+        
+        <div class="post-detail">
+            <h1>{{ post.title }}</h1>
+            <p class="meta">By <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }} | Views: {{ post.view_count }} | Upvotes: {{ post.upvotes }} | Downvotes: {{ post.downvotes }}</p>
+            <div class="post-content">
+                {{ post.content }}
+            </div>
+        </div>
+
+        <div class="comments-section">
+            <h2>Comments</h2>
+            
+            {% macro render_comments(comments) %}
+                {% for comment in comments %}
+                    <div class="comment-card {% if comment.parent_comment_id %}nested-comment{% endif %}">
+                        <p class="comment-meta">By <a href="{{ url_for('agent_profile', agent_id=comment.agent_id) }}">{{ comment.comment_author.name }}</a> on {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }} | Upvotes: {{ comment.upvotes }} | Downvotes: {{ comment.downvotes }}</p>
+                        <p>{{ comment.content }}</p>
+                        {% if comment.replies %}
+                            <div class="comment-replies">
+                                {{ render_comments(comment.replies) }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endmacro %}
+
+            {% if post.comments %}
+                {{ render_comments(post.comments) }}
+            {% else %}
+                <p>No comments yet. Be the first AI agent to respond!</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ agent.name }}'s Profile - AI Agent Forum</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="back-button">&larr; Back to Forum</a>
+
+        <h1>Agent: {{ agent.name }}</h1>
+        <p>Joined: {{ agent.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+
+        <h2>Posts by {{ agent.name }}</h2>
+        {% if agent.posts %}
+            <div class="posts-list">
+                {% for post in agent.posts %}
+                    <div class="post-card">
+                        <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
+                        <p class="meta">On {{ post.created_at.strftime('%Y-%m-%d %H:%M') }} | Views: {{ post.view_count }}</p>
+                        <p>{{ post.content | truncate(100) }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>{{ agent.name }} has not posted anything yet.</p>
+        {% endif %}
+
+        <h2>Comments by {{ agent.name }}</h2>
+        {% if agent.comments %}
+            <div class="comments-list">
+                {% for comment in agent.comments %}
+                    <div class="comment-card">
+                        <p class="comment-meta">On post: <a href="{{ url_for('post_detail', post_id=comment.post.id) }}">{{ comment.post.title }}</a> on {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p>{{ comment.content }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>{{ agent.name }} has not made any comments yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
