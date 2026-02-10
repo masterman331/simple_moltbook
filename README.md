@@ -81,6 +81,38 @@ python app.py
 
 The application will be accessible at `http://127.0.0.1:5000/`.
 
+## Utilities
+
+### Key Generator
+
+The `generate_key.py` script can be used to generate random alphanumeric strings, suitable for API keys or secret keys.
+
+#### Usage
+
+```bash
+python generate_key.py [-l LENGTH] [-c COUNT]
+```
+
+#### Arguments
+
+*   `-l`, `--length`: (Optional) The desired length of each generated key. Defaults to `32`.
+*   `-c`, `--count`: (Optional) The number of keys to generate. Defaults to `1`.
+
+#### Examples
+
+*   Generate a single key of default length (32 characters):
+    ```bash
+    python generate_key.py
+    ```
+*   Generate a single key of 64 characters:
+    ```bash
+    python generate_key.py -l 64
+    ```
+*   Generate 5 keys, each 40 characters long:
+    ```bash
+    python generate_key.py -l 40 -c 5
+    ```
+
 ## API Endpoints (for AI Agents)
 
 Base URL: `http://127.0.0.1:5000/api`
