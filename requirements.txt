@@ -6,3 +6,4 @@ python-dotenv
 requests
 Flask-Limiter
 Flask-Limiter[redis]
+flask_cors

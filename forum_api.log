@@ -47,3 +47,84 @@
 2026-02-10 11:29:45,570 - app - INFO - Post 'Automated Test Post: AI Forum Exploration' (ID: 1) view count incremented to 3.
 2026-02-10 11:29:45,576 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:29:45] "GET /post/1 HTTP/1.1" 200 -
 2026-02-10 11:29:45,666 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:29:45] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2026-02-10 11:39:59,959 - app - INFO - Application starting up...
+2026-02-10 11:40:24,558 - app - INFO - Application starting up...
+2026-02-10 11:40:48,474 - app - INFO - Application starting up...
+2026-02-10 11:41:25,260 - app - INFO - Application starting up...
+2026-02-10 11:42:32,977 - app - INFO - Application starting up...
+2026-02-10 11:45:00,535 - app - INFO - Application starting up...
+2026-02-10 11:45:56,041 - app - INFO - Application starting up...
+2026-02-10 11:47:01,636 - app - INFO - Application starting up...
+2026-02-10 11:47:01,675 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:47:01,675 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:47:01,675 - app - INFO - Attempting to create database tables if they don't exist.
+2026-02-10 11:47:01,685 - app - INFO - Database tables checked/created.
+2026-02-10 11:47:01,710 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-02-10 11:47:01,711 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-10 11:47:01,712 - werkzeug - INFO -  * Restarting with stat
+2026-02-10 11:47:02,151 - app - INFO - Application starting up...
+2026-02-10 11:47:02,170 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:47:02,170 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:47:02,171 - app - INFO - Attempting to create database tables if they don't exist.
+2026-02-10 11:47:02,173 - app - INFO - Database tables checked/created.
+2026-02-10 11:47:02,184 - werkzeug - WARNING -  * Debugger is active!
+2026-02-10 11:47:02,187 - werkzeug - INFO -  * Debugger PIN: 103-865-318
+2026-02-10 11:47:14,063 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:47:14] "[35m[1mPOST /api/agents/register HTTP/1.1[0m" 500 -
+2026-02-10 11:48:24,610 - werkzeug - INFO -  * Detected change in 'c:\\Users\\maste\\Desktop\\Projects\\ai_agent_forum_api\\settings.py', reloading
+2026-02-10 11:48:24,864 - werkzeug - INFO -  * Restarting with stat
+2026-02-10 11:48:25,707 - app - INFO - Application starting up...
+2026-02-10 11:48:25,727 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:48:25,727 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:48:25,728 - app - INFO - Attempting to create database tables if they don't exist.
+2026-02-10 11:48:25,729 - app - INFO - Database tables checked/created.
+2026-02-10 11:48:25,743 - werkzeug - WARNING -  * Debugger is active!
+2026-02-10 11:48:25,745 - werkzeug - INFO -  * Debugger PIN: 103-865-318
+2026-02-10 11:49:53,354 - app - INFO - Application starting up...
+2026-02-10 11:49:53,380 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:49:53,380 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:49:53,381 - app - INFO - Attempting to create database tables if they don't exist.
+2026-02-10 11:49:53,383 - app - INFO - Database tables checked/created.
+2026-02-10 11:49:53,406 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2026-02-10 11:49:53,406 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-10 11:49:53,408 - werkzeug - INFO -  * Restarting with stat
+2026-02-10 11:49:53,913 - app - INFO - Application starting up...
+2026-02-10 11:49:53,934 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:49:53,934 - flask_cors.core - WARNING - Unknown option passed to Flask-CORS: allowed_headers
+2026-02-10 11:49:53,935 - app - INFO - Attempting to create database tables if they don't exist.
+2026-02-10 11:49:53,936 - app - INFO - Database tables checked/created.
+2026-02-10 11:49:53,946 - werkzeug - WARNING -  * Debugger is active!
+2026-02-10 11:49:53,948 - werkzeug - INFO -  * Debugger PIN: 103-865-318
+2026-02-10 11:49:57,506 - root - INFO - Attempting to register agent: TesterBot
+2026-02-10 11:49:57,526 - root - INFO - Agent 'TesterBot' registered successfully with ID: 1
+2026-02-10 11:49:57,527 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:49:57] "[35m[1mPOST /api/agents/register HTTP/1.1[0m" 201 -
+2026-02-10 11:49:57,539 - root - INFO - Agent 'TesterBot' (ID: 1) authenticated successfully.
+2026-02-10 11:49:57,548 - root - INFO - Agent 'TesterBot' (ID: 1) created post 'Automated Test Post: AI Forum Exploration' (ID: 1).
+2026-02-10 11:49:57,550 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:49:57] "[35m[1mPOST /api/posts HTTP/1.1[0m" 201 -
+2026-02-10 11:49:58,061 - root - INFO - Agent 'TesterBot' (ID: 1) authenticated successfully.
+2026-02-10 11:49:58,064 - root - INFO - Agent 'TesterBot' (ID: 1) upvoted post (ID: 1). New upvote count: 1
+2026-02-10 11:49:58,072 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:49:58] "POST /api/posts/1/vote HTTP/1.1" 200 -
+2026-02-10 11:49:58,580 - root - INFO - Agent 'TesterBot' (ID: 1) authenticated successfully.
+2026-02-10 11:49:58,587 - root - INFO - Agent 'TesterBot' (ID: 1) added comment (ID: 1) to post (ID: 1).
+2026-02-10 11:49:58,588 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:49:58] "[35m[1mPOST /api/posts/1/comments HTTP/1.1[0m" 201 -
+2026-02-10 11:49:59,106 - root - INFO - Agent 'TesterBot' (ID: 1) authenticated successfully.
+2026-02-10 11:49:59,112 - root - INFO - Agent 'TesterBot' (ID: 1) upvoted comment (ID: 1). New upvote count: 1
+2026-02-10 11:49:59,128 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:49:59] "POST /api/comments/1/vote HTTP/1.1" 200 -
+2026-02-10 11:49:59,641 - root - INFO - Agent 'TesterBot' (ID: 1) authenticated successfully.
+2026-02-10 11:49:59,662 - root - INFO - Agent 'TesterBot' (ID: 1) added comment (ID: 2) to post (ID: 1).
+2026-02-10 11:49:59,665 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:49:59] "[35m[1mPOST /api/posts/1/comments HTTP/1.1[0m" 201 -
+2026-02-10 11:50:00,189 - root - INFO - Retrieved 1 posts with limit=1 and offset=0.
+2026-02-10 11:50:00,193 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:00] "GET /api/posts?limit=1&offset=0 HTTP/1.1" 200 -
+2026-02-10 11:50:00,705 - root - INFO - Retrieved 0 posts with limit=1 and offset=1.
+2026-02-10 11:50:00,706 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:00] "GET /api/posts?limit=1&offset=1 HTTP/1.1" 200 -
+2026-02-10 11:50:01,220 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:01] "GET /api/posts/trending?limit=1&offset=0 HTTP/1.1" 200 -
+2026-02-10 11:50:01,737 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:01] "GET /api/search?q=Automated&limit=1&offset=0 HTTP/1.1" 200 -
+2026-02-10 11:50:02,266 - root - INFO - Post 'Automated Test Post: AI Forum Exploration' (ID: 1) view count incremented to 1.
+2026-02-10 11:50:02,282 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:02] "GET /api/posts/1 HTTP/1.1" 200 -
+2026-02-10 11:50:30,925 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:30] "GET / HTTP/1.1" 200 -
+2026-02-10 11:50:31,139 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:31] "GET /static/style.css HTTP/1.1" 200 -
+2026-02-10 11:50:31,154 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:31] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-02-10 11:50:34,232 - app - INFO - Post 'Automated Test Post: AI Forum Exploration' (ID: 1) view count incremented to 2.
+2026-02-10 11:50:34,245 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:34] "GET /post/1 HTTP/1.1" 200 -
+2026-02-10 11:50:34,330 - werkzeug - INFO - 127.0.0.1 - - [10/Feb/2026 11:50:34] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
