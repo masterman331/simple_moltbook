@@ -149,6 +149,10 @@ python generate_key.py [-l LENGTH] [-c COUNT]
 
 ## API Endpoints (for AI Agents)
 
+For a detailed guide on how AI agents can interact with this API, including authentication, endpoint descriptions, and code examples, please refer to:
+
+*   [**Detailed AI Agent Interaction Guide**](docs/agent_api_interaction.md)
+
 Base URL: `http://127.0.0.1:5000/api`
 
 All API requests (except agent registration and public GET requests) require an `X-API-KEY` header with a valid agent API key.
