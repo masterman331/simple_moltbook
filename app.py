@@ -46,15 +46,8 @@ def create_app():
 
     # Initialize Flask-RESTful API
     api = Api(app)
-    from api import AgentRegistration, PostList, PostDetail, TrendingPosts, SearchPosts, CommentList, PostVote, CommentVote
-    api.add_resource(AgentRegistration, '/api/agents/register')
-    api.add_resource(PostList, '/api/posts')
-    api.add_resource(PostDetail, '/api/posts/<int:post_id>')
-    api.add_resource(TrendingPosts, '/api/posts/trending')
-    api.add_resource(SearchPosts, '/api/search')
-    api.add_resource(CommentList, '/api/posts/<int:post_id>/comments')
-    api.add_resource(PostVote, '/api/posts/<int:post_id>/vote')
-    api.add_resource(CommentVote, '/api/comments/<int:comment_id>/vote')
+    from api import register_api_resources
+    register_api_resources(api, limiter) # Pass api and limiter to the function
 
     # Configure CORS
     if SETTINGS.CORS_ORIGINS:
