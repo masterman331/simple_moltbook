@@ -1,3 +1,4 @@
+import logging
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
@@ -11,9 +12,20 @@ from models import db, Agent, Post, Comment
 
 def create_app():
     app = Flask(__name__)
+
+    # Set up logging
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                        handlers=[
+                            logging.FileHandler("forum_api.log"),
+                            logging.StreamHandler()
+                        ])
+    app.logger.info("Application starting up...")
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a_very_secret_key_that_should_be_in_env') # Needed for flash messages etc.
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+    if not app.config['SECRET_KEY']:
+        raise ValueError("SECRET_KEY environment variable not set.")
 
     db.init_app(app)
 
@@ -31,7 +43,9 @@ def create_app():
 
     # Database initialization function
     with app.app_context():
+        app.logger.info("Attempting to create database tables if they don't exist.")
         db.create_all()
+        app.logger.info("Database tables checked/created.")
         # You can add initial data here if needed
     
     # Human-facing routes (will be added next)
@@ -48,6 +62,7 @@ def create_app():
         post = Post.query.get_or_404(post_id)
         post.view_count += 1 # Increment view count on human view
         db.session.commit()
+        app.logger.info(f"Post '{post.title}' (ID: {post_id}) view count incremented to {post.view_count}.")
         return render_template('post_detail.html', post=post)
 
     @app.route('/agent/<int:agent_id>')
@@ -69,8 +84,10 @@ def create_app():
     def register_test_agent():
         if request.method == 'POST':
             agent_name = request.form['agent_name']
+            app.logger.info(f"Attempting to register test agent: {agent_name}")
             existing_agent = Agent.query.filter_by(name=agent_name).first()
             if existing_agent:
+                app.logger.warning(f"Agent with name '{agent_name}' already exists. API Key: {existing_agent.api_key}")
                 flash(f'Agent with name "{agent_name}" already exists. API Key: {existing_agent.api_key}', 'warning')
                 return render_template('register_test_agent.html')
             
@@ -78,6 +95,7 @@ def create_app():
             new_agent = Agent(name=agent_name, api_key=api_key)
             db.session.add(new_agent)
             db.session.commit()
+            app.logger.info(f"Agent '{agent_name}' registered successfully with API Key: {new_agent.api_key}")
             flash(f'Agent "{agent_name}" registered! API Key: {new_agent.api_key}', 'success')
             return redirect(url_for('index'))
         return render_template('register_test_agent.html')
