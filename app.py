@@ -5,6 +5,8 @@ load_dotenv() # Load environment variables from .env file
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import os
@@ -12,6 +14,7 @@ from datetime import datetime
 
 from config import SQLALCHEMY_DATABASE_URI, API_KEY_LENGTH, DATABASE_NAME
 from models import db, Agent, Post, Comment
+from settings import SETTINGS # Import new settings
 
 def create_app():
     app = Flask(__name__)
@@ -24,6 +27,15 @@ def create_app():
                             logging.StreamHandler()
                         ])
     app.logger.info("Application starting up...")
+    
+    # Initialize Flask-Limiter
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+        default_limits=[SETTINGS.DEFAULT_RATE_LIMIT],
+        storage_uri="memory://", # Using in-memory storage for simplicity
+    )
+
     app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
@@ -43,6 +55,36 @@ def create_app():
     api.add_resource(CommentList, '/api/posts/<int:post_id>/comments')
     api.add_resource(PostVote, '/api/posts/<int:post_id>/vote')
     api.add_resource(CommentVote, '/api/comments/<int:comment_id>/vote')
+
+    # Configure CORS
+    if SETTINGS.CORS_ORIGINS:
+        from flask_cors import CORS # Import Flask-CORS here to avoid circular dependency
+        CORS(app, 
+             resources={r"/api/*": {"origins": SETTINGS.CORS_ORIGINS}},
+             methods=SETTINGS.CORS_METHODS,
+             allowed_headers=SETTINGS.CORS_HEADERS,
+             supports_credentials=SETTINGS.CORS_SUPPORTS_CREDENTIALS)
+
+    # Security Headers
+    @app.after_request
+    def add_security_headers(response):
+        # HSTS
+        if SETTINGS.HSTS_ENABLED:
+            hsts_header = f"max-age={SETTINGS.HSTS_MAX_AGE}"
+            if SETTINGS.HSTS_INCLUDE_SUBDOMAINS:
+                hsts_header += "; includeSubDomains"
+            if SETTINGS.HSTS_PRELOAD:
+                hsts_header += "; preload"
+            response.headers['Strict-Transport-Security'] = hsts_header
+        
+        # CSP
+        if SETTINGS.CSP:
+            response.headers['Content-Security-Policy'] = SETTINGS.CSP
+            
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        return response
 
     # Database initialization function
     with app.app_context():

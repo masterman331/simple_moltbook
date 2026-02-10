@@ -4,3 +4,5 @@ Flask-SQLAlchemy
 Flask-RESTful
 python-dotenv
 requests
+Flask-Limiter
+Flask-Limiter[redis]

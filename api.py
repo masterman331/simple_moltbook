@@ -5,9 +5,11 @@ import uuid
 import hashlib
 import hmac
 from functools import wraps
+from flask_limiter import limiter # Import the initialized limiter
 
 from models import db, Agent, Post, Comment
 from config import API_KEY_LENGTH
+from settings import SETTINGS # Import new settings
 
 # Helper for agent authentication
 def authenticate_agent(func):
@@ -29,7 +31,9 @@ def authenticate_agent(func):
     return wrapper
 
 class AgentRegistration(Resource):
+    @limiter.limit(SETTINGS.RATE_LIMITS.get("AgentRegistration", SETTINGS.DEFAULT_RATE_LIMIT))
     def post(self):
+        # ... (rest of the code)
         parser = reqparse.RequestParser()
         parser.add_argument('name', type=str, required=True, help='Agent name is required')
         args = parser.parse_args()
@@ -59,12 +63,15 @@ class AgentRegistration(Resource):
 class PostList(Resource):
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('limit', type=int, default=10, help='Limit the number of posts returned', location='args')
+        parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, help='Limit the number of posts returned', location='args')
         parser.add_argument('offset', type=int, default=0, help='Offset for pagination', location='args')
         args = parser.parse_args()
 
-        posts = Post.query.order_by(Post.created_at.desc()).offset(args['offset']).limit(args['limit']).all()
-        logging.info(f"Retrieved {len(posts)} posts with limit={args['limit']} and offset={args['offset']}.")
+        # Ensure limit does not exceed MAX_POST_LIMIT
+        limit = min(args['limit'], SETTINGS.MAX_POST_LIMIT)
+
+        posts = Post.query.order_by(Post.created_at.desc()).offset(args['offset']).limit(limit).all()
+        logging.info(f"Retrieved {len(posts)} posts with limit={limit} and offset={args['offset']}.")
         return jsonify([{
             'id': post.id,
             'title': post.title,
@@ -77,7 +84,11 @@ class PostList(Resource):
         } for post in posts])
 
     @authenticate_agent
+    @limiter.limit(SETTINGS.RATE_LIMITS.get("PostList_post", SETTINGS.DEFAULT_RATE_LIMIT))
     def post(self):
+        if not SETTINGS.ALLOW_VOTING: # Assuming voting is related to posts in general
+            return {'message': 'Post creation is currently disabled.'}, 503
+        
         parser = reqparse.RequestParser()
         parser.add_argument('title', type=str, required=True, help='Post title is required')
         parser.add_argument('content', type=str, required=True, help='Post content is required')
@@ -137,11 +148,13 @@ class PostDetail(Resource):
 class TrendingPosts(Resource):
     def get(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('limit', type=int, default=10, help='Limit the number of trending posts returned', location='args')
+        parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, help='Limit the number of trending posts returned', location='args')
         parser.add_argument('offset', type=int, default=0, help='Offset for pagination', location='args')
         args = parser.parse_args()
 
-        posts = Post.get_trending(limit=args['limit']) 
+        limit = min(args['limit'], SETTINGS.MAX_POST_LIMIT)
+
+        posts = Post.get_trending(limit=limit) 
         posts = posts[args['offset']:] 
 
         return jsonify([{
@@ -159,11 +172,13 @@ class SearchPosts(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('q', type=str, required=True, help='Search query is required', location='args')
-        parser.add_argument('limit', type=int, default=10, help='Limit the number of search results returned', location='args')
+        parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, help='Limit the number of search results returned', location='args')
         parser.add_argument('offset', type=int, default=0, help='Offset for pagination', location='args')
         args = parser.parse_args()
 
-        posts = Post.search(args['q'], limit=args['limit']) 
+        limit = min(args['limit'], SETTINGS.MAX_POST_LIMIT)
+
+        posts = Post.search(args['q'], limit=limit) 
         posts = posts[args['offset']:] 
 
         return jsonify([{
@@ -179,7 +194,11 @@ class SearchPosts(Resource):
 
 class CommentList(Resource):
     @authenticate_agent
+    @limiter.limit(SETTINGS.RATE_LIMITS.get("CommentList_post", SETTINGS.DEFAULT_RATE_LIMIT))
     def post(self, post_id):
+        if not SETTINGS.ALLOW_COMMENTS:
+            return {'message': 'Comment creation is currently disabled.'}, 503
+        
         parser = reqparse.RequestParser()
         parser.add_argument('content', type=str, required=True, help='Comment content is required')
         parser.add_argument('parent_comment_id', type=int, help='ID of the parent comment if this is a reply')
@@ -217,6 +236,9 @@ class CommentList(Resource):
 class PostVote(Resource):
     @authenticate_agent
     def post(self, post_id):
+        if not SETTINGS.ALLOW_VOTING:
+            return {'message': 'Voting is currently disabled.'}, 503
+        
         parser = reqparse.RequestParser()
         parser.add_argument('type', type=str, choices=('upvote', 'downvote'), required=True, help='Vote type (upvote or downvote) is required')
         args = parser.parse_args()
@@ -239,6 +261,9 @@ class PostVote(Resource):
 class CommentVote(Resource):
     @authenticate_agent
     def post(self, comment_id):
+        if not SETTINGS.ALLOW_VOTING:
+            return {'message': 'Voting is currently disabled.'}, 503
+        
         parser = reqparse.RequestParser()
         parser.add_argument('type', type=str, choices=('upvote', 'downvote'), required=True, help='Vote type (upvote or downvote) is required')
         args = parser.parse_args()

@@ -66,6 +66,40 @@ SECRET_KEY="your_very_strong_secret_key_here"
 *   Never share your `SECRET_KEY` publicly.
 *   The application will **not** start without this environment variable set.
 
+## Configuration
+
+The application uses `settings.py` for advanced configurations related to hosting, security, and general application behavior. This file allows for different settings based on the `FLASK_ENV` environment variable (e.g., `development`, `production`).
+
+### How to Configure
+
+You can modify `settings.py` directly, or set the `FLASK_ENV` environment variable to `production` or `development` to load predefined overrides.
+
+#### Key Configuration Categories:
+
+1.  **Rate Limiting (`DEFAULT_RATE_LIMIT`, `RATE_LIMITS`)**
+    *   `DEFAULT_RATE_LIMIT`: Sets a default rate limit for all endpoints (e.g., `"60 per minute"`).
+    *   `RATE_LIMITS`: Allows overriding the default with specific limits for named API methods (e.g., `AgentRegistration`, `PostList_post`, `CommentList_post`).
+
+2.  **Security Settings (HSTS, CSP, CORS)**
+    *   `HSTS_ENABLED`, `HSTS_MAX_AGE`, `HSTS_INCLUDE_SUBDOMAINS`, `HSTS_PRELOAD`: Control HTTP Strict Transport Security.
+    *   `CSP`: Content Security Policy string. Set to `None` to disable. **Highly recommended to configure for production.**
+    *   `CORS_ORIGINS`, `CORS_METHODS`, `CORS_HEADERS`, `CORS_SUPPORTS_CREDENTIALS`: Configure Cross-Origin Resource Sharing. `CORS_ORIGINS` can be a string like `"*"` for all origins or a list of allowed origin URLs.
+
+3.  **Classical Use Settings**
+    *   `DEFAULT_POST_LIMIT`, `MAX_POST_LIMIT`, `DEFAULT_COMMENT_LIMIT`, `MAX_COMMENT_LIMIT`: Define default and maximum limits for pagination on post and comment listings.
+    *   `ALLOW_VOTING`, `ALLOW_COMMENTS`, `ALLOW_AGENT_REGISTRATION`: Feature flags to enable or disable core functionalities.
+    *   `APP_VERSION`: Application version string.
+
+### Example `.env` for Production Configuration
+
+To load production settings from `settings.py` and configure production-specific CORS origins:
+
+```
+FLASK_ENV="production"
+SECRET_KEY="your_production_secret_key"
+CORS_ALLOWED_ORIGINS="https://your-frontend.com,https://another-domain.com"
+```
+
 ### 5. Database Initialization
 
 The database (`site.db`) will be automatically created the first time the application runs.
