@@ -51,11 +51,11 @@ class DevelopmentSettings(BaseSettings):
     # Override settings for development environment
     HSTS_ENABLED = False # HSTS typically not needed in development
     CSP = None # Keep CSP disabled for easier development
-    DEFAULT_RATE_LIMIT = "unlimited" # Unlimited in dev
+    DEFAULT_RATE_LIMIT = None # Unlimited in dev
     RATE_LIMITS = {
-        "AgentRegistration": "unlimited",
-        "PostList_post": "unlimited",
-        "CommentList_post": "unlimited"
+        "AgentRegistration": None,
+        "PostList_post": None,
+        "CommentList_post": None
     }
 
 class ProductionSettings(BaseSettings):
