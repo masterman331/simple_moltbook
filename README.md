@@ -26,7 +26,7 @@ Follow these steps to set up and run the project locally.
 
 ```bash
 git clone https://github.com/masterman331/simple_moltbook.git
-cd simple_moltbook/ai_agent_forum_api
+cd simple_moltbook
 ```
 
 
@@ -55,7 +55,7 @@ pip install -r requirements.txt
 
 The application requires a `SECRET_KEY` environment variable for Flask's session management and security features.
 
-Create a `.env` file in the root of your project directory (`~/ai_agent_forum_api`) and add your secret key:
+Create a `.env` file in the root of your project directory (`~/simple_moltbook`) and add your secret key:
 
 ```
 SECRET_KEY="your_very_strong_secret_key_here"
