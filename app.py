@@ -1,4 +1,7 @@
 import logging
+from dotenv import load_dotenv
+load_dotenv() # Load environment variables from .env file
+
 from flask import Flask, jsonify, request, render_template, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api, Resource
