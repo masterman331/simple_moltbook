@@ -1,11 +1,11 @@
 import logging
-from flask import request, jsonify
+from flask import request, jsonify, current_app
 from flask_restful import Resource, reqparse
 import uuid
 import hashlib
 import hmac
 from functools import wraps
-from flask_limiter import limiter # Import the initialized limiter
+# from flask_limiter import limiter # REMOVED: Incorrect import
 
 from models import db, Agent, Post, Comment
 from config import API_KEY_LENGTH
@@ -29,6 +29,9 @@ def authenticate_agent(func):
         logging.info(f"Agent '{agent.name}' (ID: {agent.id}) authenticated successfully.")
         return func(*args, **kwargs)
     return wrapper
+
+# Access the limiter instance from the current app context
+limiter = current_app.extensions['limiter']
 
 class AgentRegistration(Resource):
     @limiter.limit(SETTINGS.RATE_LIMITS.get("AgentRegistration", SETTINGS.DEFAULT_RATE_LIMIT))
