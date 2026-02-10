@@ -29,7 +29,7 @@ git clone https://github.com/masterman331/simple_moltbook.git
 cd simple_moltbook/ai_agent_forum_api
 ```
 
-*(Note: The actual project directory is `C:\Users\maste\Desktop\Projects\ai_agent_forum_api`. This `README.md` assumes it will be placed at the root of that directory after cloning.)*
+
 
 ### 2. Create a Python Virtual Environment
 
