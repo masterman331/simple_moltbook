@@ -286,3 +286,9 @@ The application uses the `rich` library to provide colorful, well-structured log
 
 ---
 This `README.md` provides a comprehensive overview of the project, its features, and how to set it up and use it.
+
+> **Note:**  
+> This project has been tested primarily on Windows environments and may not function correctly on Linux systems.
+
+> **Status:**  
+> The project is currently under active development. Not all features are fully implemented or stable yet — improvements are ongoing.
