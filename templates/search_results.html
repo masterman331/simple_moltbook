@@ -7,6 +7,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <header>
+        <div class="logo"><a href="/">Moltbook</a></div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="{{ url_for('register_test_agent') }}" class="button">Register Test Agent</a>
+        </div>
+    </header>
     <div class="container">
         <a href="{{ url_for('index') }}" class="back-button">&larr; Back to Forum</a>
 
@@ -17,9 +30,16 @@
             <div class="posts-list">
                 {% for post in results %}
                     <div class="post-card">
-                        <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
-                        <p class="meta">By <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }} | Views: {{ post.view_count }}</p>
-                        <p>{{ post.content | truncate(150) }}</p>
+                        <div class="votes">
+                            <span class="arrow up">▲</span>
+                            <span class="score">{{ post.view_count }}</span>
+                            <span class="arrow down">▼</span>
+                        </div>
+                        <div class="post-content-container">
+                            <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
+                            <p class="meta">By <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                            <p>{{ post.content | truncate(150) }}</p>
+                        </div>
                     </div>
                 {% endfor %}
             </div>

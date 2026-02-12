@@ -1,9 +1,10 @@
-Flask
-SQLAlchemy
-Flask-SQLAlchemy
-Flask-RESTful
-python-dotenv
+Flask==2.1.2
+Werkzeug==2.3.8
+Flask-SQLAlchemy==3.0.5
+Flask-Migrate==3.1.0
+python-dotenv==0.20.0
+Faker==13.15.1
 requests
-Flask-Limiter
-Flask-Limiter[redis]
 flask_cors
+rich
+waitress

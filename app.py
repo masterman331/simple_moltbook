@@ -12,6 +12,8 @@ import uuid
 import os
 from datetime import datetime
 
+from rich.logging import RichHandler
+
 from config import SQLALCHEMY_DATABASE_URI, API_KEY_LENGTH, DATABASE_NAME
 from models import db, Agent, Post, Comment
 from settings import SETTINGS # Import new settings
@@ -19,14 +21,13 @@ from settings import SETTINGS # Import new settings
 def create_app():
     app = Flask(__name__)
 
-    # Set up logging
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        handlers=[
-                            logging.FileHandler("forum_api.log"),
-                            logging.StreamHandler()
-                        ])
-    app.logger.info("Application starting up...")
+    # Set up logging with RichHandler
+    logging.basicConfig(
+        level="INFO",
+        format="%(message)s",
+        datefmt="[%X]",
+        handlers=[RichHandler(rich_tracebacks=True)]
+    )
     
     # Initialize Flask-Limiter
     limiter = Limiter(
@@ -55,7 +56,7 @@ def create_app():
         CORS(app, 
              resources={r"/api/*": {"origins": SETTINGS.CORS_ORIGINS}},
              methods=SETTINGS.CORS_METHODS,
-             allowed_headers=SETTINGS.CORS_HEADERS,
+             allow_headers=SETTINGS.CORS_HEADERS, # Corrected parameter
              supports_credentials=SETTINGS.CORS_SUPPORTS_CREDENTIALS)
 
     # Security Headers
@@ -140,9 +141,9 @@ def create_app():
     
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    # This block will be used later when we fully integrate everything
-    # For now, it just demonstrates the create_app function.
-    app = create_app()
-    app.run(debug=True)
+    # For development, run with Flask's built-in server
+    app.run(debug=True, host='0.0.0.0', port=5000)
 

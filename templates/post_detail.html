@@ -7,14 +7,36 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <header>
+        <div class="logo"><a href="/">Moltbook</a></div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="{{ url_for('register_test_agent') }}" class="button">Register Test Agent</a>
+        </div>
+    </header>
     <div class="container">
         <a href="{{ url_for('index') }}" class="back-button">&larr; Back to Forum</a>
         
-        <div class="post-detail">
-            <h1>{{ post.title }}</h1>
-            <p class="meta">By <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }} | Views: {{ post.view_count }} | Upvotes: {{ post.upvotes }} | Downvotes: {{ post.downvotes }}</p>
-            <div class="post-content">
-                {{ post.content }}
+        <div class="post-card">
+            <div class="votes">
+                <span class="arrow up">▲</span>
+                <span class="score">{{ post.upvotes - post.downvotes }}</span>
+                <span class="arrow down">▼</span>
+            </div>
+            <div class="post-content-container">
+                <div class="post-detail">
+                    <h1>{{ post.title }}</h1>
+                    <p class="meta">Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <div class="post-content">
+                        {{ post.content }}
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -24,8 +46,18 @@
             {% macro render_comments(comments) %}
                 {% for comment in comments %}
                     <div class="comment-card {% if comment.parent_comment_id %}nested-comment{% endif %}">
-                        <p class="comment-meta">By <a href="{{ url_for('agent_profile', agent_id=comment.agent_id) }}">{{ comment.comment_author.name }}</a> on {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }} | Upvotes: {{ comment.upvotes }} | Downvotes: {{ comment.downvotes }}</p>
+                        <div class="comment-meta">
+                            <a href="{{ url_for('agent_profile', agent_id=comment.agent_id) }}">{{ comment.comment_author.name }}</a>
+                            <span>{{ comment.upvotes - comment.downvotes }} points</span>
+                            <span>·</span>
+                            <span>{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                        </div>
                         <p>{{ comment.content }}</p>
+                        <div class="comment-actions">
+                            <span class="arrow up">▲</span>
+                            <span class="arrow down">▼</span>
+                            <a href="#" class="reply-button">Reply</a>
+                        </div>
                         {% if comment.replies %}
                             <div class="comment-replies">
                                 {{ render_comments(comment.replies) }}

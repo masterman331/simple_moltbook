@@ -6,9 +6,14 @@ import hashlib
 import hmac
 from functools import wraps
 
+from rich.logging import RichHandler
+
 from models import db, Agent, Post, Comment
 from config import API_KEY_LENGTH
 from settings import SETTINGS # Import new settings
+
+# Set up logging with RichHandler
+log = logging.getLogger("rich")
 
 # Helper for agent authentication
 def authenticate_agent(func):
@@ -16,16 +21,16 @@ def authenticate_agent(func):
     def wrapper(*args, **kwargs):
         api_key = request.headers.get('X-API-KEY')
         if not api_key:
-            logging.warning("Authentication failed: X-API-KEY header missing.")
+            log.warning("Authentication failed: X-API-KEY header missing.")
             return {'message': 'X-API-KEY header missing'}, 401
         
         agent = Agent.query.filter_by(api_key=api_key).first()
         if not agent:
-            logging.warning("Authentication failed: Invalid API Key provided (redacted).")
+            log.warning("Authentication failed: Invalid API Key provided (redacted).")
             return {'message': 'Invalid API Key'}, 401
         
         request.agent = agent # Attach agent to request object
-        logging.info(f"Agent '{agent.name}' (ID: {agent.id}) authenticated successfully.")
+        log.info(f"Agent '{agent.name}' (ID: {agent.id}) authenticated successfully.")
         return func(*args, **kwargs)
     return wrapper
 
@@ -41,10 +46,10 @@ def register_api_resources(api, limiter):
             args = parser.parse_args()
 
             agent_name = args['name']
-            logging.info(f"Attempting to register agent: {agent_name}")
+            log.info(f"Attempting to register agent: {agent_name}")
 
             if Agent.query.filter_by(name=agent_name).first():
-                logging.warning(f"Agent registration failed: Agent with name '{agent_name}' already exists.")
+                log.warning(f"Agent registration failed: Agent with name '{agent_name}' already exists.")
                 return {'message': 'Agent with this name already exists'}, 400
 
             # Generate a unique API key
@@ -54,7 +59,7 @@ def register_api_resources(api, limiter):
             db.session.add(new_agent)
             db.session.commit()
 
-            logging.info(f"Agent '{agent_name}' registered successfully with ID: {new_agent.id}")
+            log.info(f"Agent '{agent_name}' registered successfully with ID: {new_agent.id}")
             return {
                 'message': 'Agent registered successfully',
                 'agent_id': new_agent.id,
@@ -73,7 +78,7 @@ def register_api_resources(api, limiter):
             limit = min(args['limit'], SETTINGS.MAX_POST_LIMIT)
 
             posts = Post.query.order_by(Post.created_at.desc()).offset(args['offset']).limit(limit).all()
-            logging.info(f"Retrieved {len(posts)} posts with limit={limit} and offset={args['offset']}.")
+            log.info(f"Retrieved {len(posts)} posts with limit={limit} and offset={args['offset']}.")
             return jsonify([{
                 'id': post.id,
                 'title': post.title,
@@ -96,7 +101,7 @@ def register_api_resources(api, limiter):
             new_post = Post(title=args['title'], content=args['content'], agent_id=request.agent.id)
             db.session.add(new_post)
             db.session.commit()
-            logging.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) created post '{new_post.title}' (ID: {new_post.id}).")
+            log.info(f"[bold green]New Post Created:[/bold green] '{new_post.title}' by {request.agent.name}")
             return {
                 'message': 'Post created successfully',
                 'post_id': new_post.id,
@@ -108,12 +113,12 @@ def register_api_resources(api, limiter):
         def get(self, post_id):
             post = Post.query.get(post_id)
             if not post:
-                logging.warning(f"Attempted to access non-existent post with ID: {post_id}")
+                log.warning(f"Attempted to access non-existent post with ID: {post_id}")
                 return {'message': 'Post not found'}, 404
             
             post.view_count += 1
             db.session.commit()
-            logging.info(f"Post '{post.title}' (ID: {post_id}) view count incremented to {post.view_count}.")
+            log.info(f"Post '{post.title}' (ID: {post_id}) view count incremented to {post.view_count}.")
 
             # Helper function to convert comments to a dict, including replies
             def comment_to_dict(comment):
@@ -205,14 +210,14 @@ def register_api_resources(api, limiter):
 
             post = Post.query.get(post_id)
             if not post:
-                logging.warning(f"Comment creation failed: Post with ID {post_id} not found.")
+                log.warning(f"Comment creation failed: Post with ID {post_id} not found.")
                 return {'message': 'Post not found'}, 404
             
             parent_comment = None
             if args['parent_comment_id']:
                 parent_comment = Comment.query.get(args['parent_comment_id'])
                 if not parent_comment or parent_comment.post_id != post_id:
-                    logging.warning(f"Comment creation failed: Parent comment with ID {args['parent_comment_id']} not found or does not belong to post {post_id}.")
+                    log.warning(f"Comment creation failed: Parent comment with ID {args['parent_comment_id']} not found or does not belong to post {post_id}.")
                     return {'message': 'Parent comment not found or does not belong to this post'}, 400
 
             new_comment = Comment(
@@ -223,7 +228,7 @@ def register_api_resources(api, limiter):
             )
             db.session.add(new_comment)
             db.session.commit()
-            logging.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) added comment (ID: {new_comment.id}) to post (ID: {post.id}).")
+            log.info(f"[bold blue]New Comment Added:[/bold blue] by {request.agent.name} on post '{post.title}'")
             return {
                 'message': 'Comment added successfully',
                 'comment_id': new_comment.id,
@@ -244,15 +249,15 @@ def register_api_resources(api, limiter):
 
             post = Post.query.get(post_id)
             if not post:
-                logging.warning(f"Post voting failed: Post with ID {post_id} not found.")
+                log.warning(f"Post voting failed: Post with ID {post_id} not found.")
                 return {'message': 'Post not found'}, 404
             
             if args['type'] == 'upvote':
                 post.upvotes += 1
-                logging.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) upvoted post (ID: {post.id}). New upvote count: {post.upvotes}")
+                log.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) upvoted post (ID: {post.id}). New upvote count: {post.upvotes}")
             elif args['type'] == 'downvote':
                 post.downvotes += 1
-                logging.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) downvoted post (ID: {post.id}). New downvote count: {post.downvotes}")
+                log.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) downvoted post (ID: {post.id}). New downvote count: {post.downvotes}")
             
             db.session.commit()
             return {'message': 'Post {}d successfully'.format(args["type"]), 'post_id': post.id, 'upvotes': post.upvotes, 'downvotes': post.downvotes}, 200
@@ -269,15 +274,15 @@ def register_api_resources(api, limiter):
 
             comment = Comment.query.get(comment_id)
             if not comment:
-                logging.warning(f"Comment voting failed: Comment with ID {comment_id} not found.")
+                log.warning(f"Comment voting failed: Comment with ID {comment_id} not found.")
                 return {'message': 'Comment not found'}, 404
             
             if args['type'] == 'upvote':
                 comment.upvotes += 1
-                logging.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) upvoted comment (ID: {comment.id}). New upvote count: {comment.upvotes}")
+                log.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) upvoted comment (ID: {comment.id}). New upvote count: {comment.upvotes}")
             elif args['type'] == 'downvote':
                 comment.downvotes += 1
-                logging.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) downvoted comment (ID: {comment.id}). New downvote count: {comment.downvotes}")
+                log.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) downvoted comment (ID: {comment.id}). New downvote count: {comment.downvotes}")
             
             db.session.commit()
             return {'message': 'Comment {}d successfully'.format(args["type"]), 'comment_id': comment.id, 'upvotes': comment.upvotes, 'downvotes': comment.downvotes}, 200

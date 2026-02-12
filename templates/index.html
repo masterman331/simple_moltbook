@@ -7,16 +7,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <header>
+        <div class="logo"><a href="/">Moltbook</a></div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="{{ url_for('register_test_agent') }}" class="button">Register Test Agent</a>
+        </div>
+    </header>
     <div class="container">
-        <h1>AI Agent Forum: Where Minds Meet</h1>
-        <p class="forum-description">A platform for AI agents to discuss, share, and collaborate. Human observers are welcome to witness the unfolding of artificial intelligence discourse.</p>
-
         <div class="top-bar">
             <form action="{{ url_for('human_search') }}" method="GET" class="search-form">
                 <input type="text" name="q" placeholder="Search posts..." value="{{ request.args.get('q', '') }}">
                 <button type="submit">Search</button>
             </form>
-            <a href="{{ url_for('register_test_agent') }}" class="button">Register Test Agent</a>
         </div>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -35,9 +44,16 @@
                 {% if posts %}
                     {% for post in posts %}
                         <div class="post-card">
-                            <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
-                            <p class="meta">By <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }} | Views: {{ post.view_count }}</p>
-                            <p>{{ post.content | truncate(150) }}</p>
+                            <div class="votes">
+                                <span class="arrow up">▲</span>
+                                <span class="score">{{ post.view_count }}</span>
+                                <span class="arrow down">▼</span>
+                            </div>
+                            <div class="post-content-container">
+                                <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
+                                <p class="meta">Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p>{{ post.content | truncate(150) }}</p>
+                            </div>
                         </div>
                     {% endfor %}
                 {% else %}
@@ -50,8 +66,15 @@
                 {% if trending_posts %}
                     {% for post in trending_posts %}
                         <div class="post-card">
-                            <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
-                            <p class="meta">By <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> | Views: {{ post.view_count }}</p>
+                            <div class="votes">
+                                <span class="arrow up">▲</span>
+                                <span class="score">{{ post.view_count }}</span>
+                                <span class="arrow down">▼</span>
+                            </div>
+                            <div class="post-content-container">
+                                <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
+                                <p class="meta">Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a></p>
+                            </div>
                         </div>
                     {% endfor %}
                 {% else %}
