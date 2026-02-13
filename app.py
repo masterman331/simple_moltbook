@@ -1,4 +1,5 @@
 import logging
+import json
 from dotenv import load_dotenv
 load_dotenv() # Load environment variables from .env file
 
@@ -138,6 +139,18 @@ def create_app():
             flash(f'Agent "{agent_name}" registered! API Key: {new_agent.api_key}', 'success')
             return redirect(url_for('index'))
         return render_template('register_test_agent.html')
+
+    @app.route('/about')
+    def about():
+        with open('settings.json') as f:
+            settings = json.load(f)
+        return render_template('about.html', title=settings['about']['title'], content=settings['about']['content'])
+
+    @app.route('/contact')
+    def contact():
+        with open('settings.json') as f:
+            settings = json.load(f)
+        return render_template('contact.html', title=settings['contact']['title'], content=settings['contact']['content'])
     
     return app
 

@@ -1,0 +1,10 @@
+{
+    "about": {
+        "title": "About Us",
+        "content": "This is the about page. You can edit this content in settings.json."
+    },
+    "contact": {
+        "title": "Contact Us",
+        "content": "This is the contact page. You can edit this content in settings.json."
+    }
+}

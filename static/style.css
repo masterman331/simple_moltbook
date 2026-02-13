@@ -2,8 +2,8 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #1a1a1b;
-    color: #d7dadc;
+    background-color: #1E1E1E;
+    color: #FFFFFF;
     line-height: 1.6;
 }
 
@@ -11,21 +11,21 @@ body {
     max-width: 1000px;
     width: 95%;
     margin: 20px auto;
-    background-color: #1a1a1b;
+    background-color: #1E1E1E;
     padding: 0;
 }
 
 h1, h2 {
-    color: #d7dadc;
+    color: #FFFFFF;
     text-align: center;
     margin-bottom: 25px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #343536;
+    border-bottom: 1px solid #333333;
 }
 
 h1 {
     font-size: 2.5em;
-    border-bottom: 2px solid #343536;
+    border-bottom: 2px solid #333333;
 }
 
 h2 {
@@ -35,7 +35,7 @@ h2 {
 
 .forum-description {
     text-align: center;
-    color: #818384;
+    color: #828282;
     margin-bottom: 30px;
     font-size: 1.1em;
 }
@@ -46,8 +46,8 @@ h2 {
     align-items: center;
     margin-bottom: 30px;
     padding: 10px 20px;
-    border-bottom: 1px solid #343536;
-    background-color: #1a1a1b;
+    border-bottom: 1px solid #333333;
+    background-color: #1E1E1E;
 }
 
 .search-form {
@@ -60,11 +60,11 @@ h2 {
 .search-form input[type="text"] {
     flex-grow: 1;
     padding: 10px 15px;
-    border: 1px solid #343536;
+    border: 1px solid #333333;
     border-radius: 20px;
     font-size: 1em;
-    background-color: #272729;
-    color: #d7dadc;
+    background-color: #333333;
+    color: #FFFFFF;
 }
 
 .search-form button {
@@ -73,31 +73,31 @@ h2 {
 
 .button, .back-button {
     display: inline-block;
-    background-color: #d7dadc;
-    color: #1a1a1b;
+    background-color: #FF4500; /* Changed to orange */
+    color: #1E1E1E;
     padding: 8px 16px;
     border-radius: 20px;
     text-decoration: none;
     font-weight: bold;
     transition: background-color 0.2s ease;
-    border: 1px solid #d7dadc;
+    border: 1px solid #FF4500; /* Changed to orange */
     cursor: pointer;
     text-align: center;
     font-size: 0.9em;
 }
 
 .button:hover {
-    background-color: #c0c2c4;
+    background-color: #E04000; /* Darker orange on hover */
 }
 
 .back-button {
     background-color: transparent;
-    color: #d7dadc;
+    color: #FFFFFF;
     margin-bottom: 20px;
 }
 
 .back-button:hover {
-    background-color: #343536;
+    background-color: #333333;
 }
 
 .content-sections {
@@ -122,8 +122,8 @@ h2 {
 }
 
 .post-card {
-    background-color: #1a1a1b;
-    border: 1px solid #343536;
+    background-color: #1E1E1E;
+    border: 1px solid #333333;
     border-radius: 4px;
     padding: 0;
     margin-bottom: 10px;
@@ -135,21 +135,21 @@ h2 {
     flex-direction: column;
     align-items: center;
     padding: 8px;
-    background-color: #161617;
+    background-color: #1E1E1E;
 }
 
 .post-card .votes .arrow {
     font-size: 1.2em;
     cursor: pointer;
-    color: #818384;
+    color: #828282;
 }
 
 .post-card .votes .arrow.up {
-    color: #ff4500;
+    color: #FF4500; /* Changed to orange */
 }
 
 .post-card .votes .arrow.down {
-    color: #7193ff;
+    color: #2F80ED; /* Kept blue for contrast */
 }
 
 .post-card .votes .score {
@@ -170,7 +170,7 @@ h2 {
 }
 
 .post-card h3 a {
-    color: #d7dadc;
+    color: #FFFFFF;
     text-decoration: none;
 }
 
@@ -180,20 +180,20 @@ h2 {
 
 .post-card .meta {
     font-size: 0.8em;
-    color: #818384;
+    color: #828282;
     margin-bottom: 10px;
 }
 
 .post-card p {
     font-size: 0.95em;
-    color: #d7dadc;
+    color: #FFFFFF;
     -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
     mask-image: linear-gradient(180deg, #000 60%, transparent);
 }
 
 .post-detail {
-    background-color: #1a1a1b;
-    border: 1px solid #343536;
+    background-color: #1E1E1E;
+    border: 1px solid #333333;
     border-radius: 4px;
     padding: 0;
     margin-bottom: 30px;
@@ -209,29 +209,29 @@ h2 {
 
 .post-detail .meta {
     font-size: 0.8em;
-    color: #818384;
+    color: #828282;
     margin-bottom: 20px;
-    border-bottom: 1px solid #343536;
+    border-bottom: 1px solid #333333;
     padding: 0 15px 10px;
 }
 
 .post-content {
     font-size: 1em;
     line-height: 1.6;
-    color: #d7dadc;
+    color: #FFFFFF;
     padding: 0 15px;
 }
 
 .comments-section {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid #343536;
+    border-top: 1px solid #333333;
 }
 
 .comment-card {
     background-color: transparent;
     border: none;
-    border-left: 2px solid #343536;
+    border-left: 2px solid #333333;
     padding: 0 0 15px 15px;
     margin-bottom: 15px;
     margin-left: 10px;
@@ -239,13 +239,13 @@ h2 {
 
 .comment-card .comment-meta {
     font-size: 0.8em;
-    color: #818384;
+    color: #828282;
     margin-bottom: 5px;
 }
 
 .comment-card p {
     font-size: 0.9em;
-    color: #d7dadc;
+    color: #FFFFFF;
 }
 
 .posts-list, .comments-list {
@@ -253,8 +253,8 @@ h2 {
 }
 
 form {
-    background-color: #1a1a1b;
-    border: 1px solid #343536;
+    background-color: #1E1E1E;
+    border: 1px solid #333333;
     border-radius: 4px;
     padding: 30px;
     margin-top: 20px;
@@ -268,25 +268,25 @@ form {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: #d7dadc;
+    color: #FFFFFF;
 }
 
 .form-group input[type="text"],
 .form-group textarea {
     width: 100%;
     padding: 12px;
-    border: 1px solid #343536;
+    border: 1px solid #333333;
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 1em;
-    background-color: #272729;
-    color: #d7dadc;
+    background-color: #333333;
+    color: #FFFFFF;
     transition: border-color 0.3s ease;
 }
 
 .form-group input[type="text"]:focus,
 .form-group textarea:focus {
-    border-color: #d7dadc;
+    border-color: #FFFFFF;
     outline: none;
     box-shadow: none;
 }
@@ -304,19 +304,19 @@ form {
 }
 
 .alert-success {
-    color: #1a1a1b;
-    background-color: #24a0ed;
-    border-color: #24a0ed;
+    color: #1E1E1E;
+    background-color: #FF4500; /* Changed to orange */
+    border-color: #FF4500; /* Changed to orange */
 }
 
 .alert-warning {
-    color: #1a1a1b;
-    background-color: #ff4500;
-    border-color: #ff4500;
+    color: #1E1E1E;
+    background-color: #EB5757;
+    border-color: #EB5757;
 }
 
 a {
-    color: #4f9eed;
+    color: #FF4500; /* Changed to orange */
     text-decoration: none;
 }
 
@@ -325,16 +325,16 @@ a:hover {
 }
 
 header {
-    background-color: #1a1a1b;
+    background-color: #1E1E1E;
     padding: 10px 20px;
-    border-bottom: 1px solid #343536;
+    border-bottom: 1px solid #333333;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .logo a {
-    color: #d7dadc;
+    color: #FFFFFF;
     text-decoration: none;
     font-size: 1.5em;
     font-weight: bold;
@@ -349,7 +349,7 @@ nav ul {
 }
 
 nav a {
-    color: #d7dadc;
+    color: #FFFFFF;
     text-decoration: none;
     font-weight: bold;
 }
