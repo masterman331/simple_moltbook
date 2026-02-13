@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Roboto Mono', monospace;
     margin: 0;
     padding: 0;
     background-color: #1E1E1E;
@@ -31,6 +33,7 @@ h1 {
 h2 {
     font-size: 1.8em;
     margin-top: 30px;
+    color: #FF4500; /* Changed to orange */
 }
 
 .forum-description {
@@ -61,7 +64,7 @@ h2 {
     flex-grow: 1;
     padding: 10px 15px;
     border: 1px solid #333333;
-    border-radius: 20px;
+    border-radius: 0; /* Sharper corners */
     font-size: 1em;
     background-color: #333333;
     color: #FFFFFF;
@@ -73,31 +76,34 @@ h2 {
 
 .button, .back-button {
     display: inline-block;
-    background-color: #FF4500; /* Changed to orange */
+    background-color: #FF4500;
     color: #1E1E1E;
     padding: 8px 16px;
-    border-radius: 20px;
+    border-radius: 0; /* Sharper corners */
     text-decoration: none;
     font-weight: bold;
-    transition: background-color 0.2s ease;
-    border: 1px solid #FF4500; /* Changed to orange */
+    transition: all 0.2s ease;
+    border: 1px solid #FF4500;
     cursor: pointer;
     text-align: center;
     font-size: 0.9em;
 }
 
 .button:hover {
-    background-color: #E04000; /* Darker orange on hover */
+    background-color: #E04000;
+    box-shadow: 0 0 10px #FF4500; /* Orange glow */
 }
 
 .back-button {
     background-color: transparent;
     color: #FFFFFF;
     margin-bottom: 20px;
+    border: 1px solid #FFFFFF;
 }
 
 .back-button:hover {
     background-color: #333333;
+    box-shadow: 0 0 10px #FFFFFF;
 }
 
 .content-sections {
@@ -124,10 +130,16 @@ h2 {
 .post-card {
     background-color: #1E1E1E;
     border: 1px solid #333333;
-    border-radius: 4px;
+    border-radius: 0; /* Sharper corners */
     padding: 0;
     margin-bottom: 10px;
     display: flex;
+    transition: all 0.2s ease;
+}
+
+.post-card:hover {
+    border-color: #FF4500;
+    box-shadow: 0 0 10px #FF4500; /* Orange glow */
 }
 
 .post-card .votes {
@@ -145,11 +157,11 @@ h2 {
 }
 
 .post-card .votes .arrow.up {
-    color: #FF4500; /* Changed to orange */
+    color: #FF4500;
 }
 
 .post-card .votes .arrow.down {
-    color: #2F80ED; /* Kept blue for contrast */
+    color: #2F80ED;
 }
 
 .post-card .votes .score {
@@ -194,7 +206,7 @@ h2 {
 .post-detail {
     background-color: #1E1E1E;
     border: 1px solid #333333;
-    border-radius: 4px;
+    border-radius: 0; /* Sharper corners */
     padding: 0;
     margin-bottom: 30px;
 }
@@ -255,7 +267,7 @@ h2 {
 form {
     background-color: #1E1E1E;
     border: 1px solid #333333;
-    border-radius: 4px;
+    border-radius: 0; /* Sharper corners */
     padding: 30px;
     margin-top: 20px;
 }
@@ -276,7 +288,7 @@ form {
     width: 100%;
     padding: 12px;
     border: 1px solid #333333;
-    border-radius: 4px;
+    border-radius: 0; /* Sharper corners */
     box-sizing: border-box;
     font-size: 1em;
     background-color: #333333;
@@ -299,14 +311,14 @@ form {
     padding: 15px;
     margin-bottom: 20px;
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: 0; /* Sharper corners */
     text-align: center;
 }
 
 .alert-success {
     color: #1E1E1E;
-    background-color: #FF4500; /* Changed to orange */
-    border-color: #FF4500; /* Changed to orange */
+    background-color: #FF4500;
+    border-color: #FF4500;
 }
 
 .alert-warning {
@@ -316,7 +328,7 @@ form {
 }
 
 a {
-    color: #FF4500; /* Changed to orange */
+    color: #FF4500;
     text-decoration: none;
 }
 
