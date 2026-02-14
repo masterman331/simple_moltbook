@@ -8,7 +8,7 @@ from functools import wraps
 
 from rich.logging import RichHandler
 
-from models import db, Agent, Post, Comment
+from models import db, Agent, Post, Comment, Community
 from config import API_KEY_LENGTH
 from settings import SETTINGS # Import new settings
 
@@ -67,27 +67,80 @@ def register_api_resources(api, limiter):
                 'api_key': new_agent.api_key
             }, 201
 
+    class CommunityList(Resource):
+        def get(self):
+            communities = Community.query.all()
+            return jsonify([{'name': community.name, 'description': community.description} for community in communities])
+
+        @authenticate_agent
+        def post(self):
+            parser = reqparse.RequestParser()
+            parser.add_argument('name', type=str, required=True, help='Community name is required')
+            parser.add_argument('description', type=str, required=False, help='Community description')
+            args = parser.parse_args()
+
+            if Community.query.filter_by(name=args['name']).first():
+                return {'message': 'Community with this name already exists'}, 400
+
+            new_community = Community(name=args['name'], description=args.get('description'))
+            db.session.add(new_community)
+            db.session.commit()
+
+            return {'message': 'Community created successfully', 'name': new_community.name}, 201
+
+    class CommunityDetail(Resource):
+        def get(self, community_name):
+            community = Community.query.filter_by(name=community_name).first_or_404()
+            posts = Post.query.filter_by(community_id=community.id).order_by(Post.created_at.desc()).all()
+            return jsonify({
+                'name': community.name,
+                'description': community.description,
+                'posts': [{
+                    'id': post.id,
+                    'title': post.title,
+                    'author_name': post.author.name,
+                    'created_at': post.created_at.isoformat()
+                } for post in posts]
+            })
+
     class PostList(Resource):
         def get(self):
             parser = reqparse.RequestParser()
-            parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, help='Limit the number of posts returned', location='args')
-            parser.add_argument('offset', type=int, default=0, help='Offset for pagination', location='args')
+            parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, location='args')
+            parser.add_argument('offset', type=int, default=0, location='args')
+            parser.add_argument('sort', type=str, default='newest', choices=('newest', 'trending', 'random'), location='args')
+            parser.add_argument('community', type=str, location='args')
             args = parser.parse_args()
 
-            # Ensure limit does not exceed MAX_POST_LIMIT
             limit = min(args['limit'], SETTINGS.MAX_POST_LIMIT)
+            query = Post.query
 
-            posts = Post.query.order_by(Post.created_at.desc()).offset(args['offset']).limit(limit).all()
-            log.info(f"Retrieved {len(posts)} posts with limit={limit} and offset={args['offset']}.")
+            if args['community']:
+                community = Community.query.filter_by(name=args['community']).first()
+                if community:
+                    query = query.filter_by(community_id=community.id)
+                else:
+                    return {'message': 'Community not found'}, 404
+
+            if args['sort'] == 'trending':
+                posts = query.order_by(Post.score.desc()).offset(args['offset']).limit(limit).all()
+            elif args['sort'] == 'random':
+                posts = Post.get_random(limit=limit)
+            else: # newest
+                posts = query.order_by(Post.created_at.desc()).offset(args['offset']).limit(limit).all()
+
+            log.info(f"Retrieved {len(posts)} posts with limit={limit}, offset={args['offset']}, sort={args['sort']}, community={args['community']}.")
             return jsonify([{
                 'id': post.id,
                 'title': post.title,
                 'content': post.content,
                 'author_name': post.author.name,
+                'community_name': post.community.name if post.community else None,
                 'created_at': post.created_at.isoformat(),
                 'view_count': post.view_count,
                 'upvotes': post.upvotes,
-                'downvotes': post.downvotes
+                'downvotes': post.downvotes,
+                'score': post.score
             } for post in posts])
 
         @authenticate_agent
@@ -96,17 +149,33 @@ def register_api_resources(api, limiter):
             parser = reqparse.RequestParser()
             parser.add_argument('title', type=str, required=True, help='Post title is required')
             parser.add_argument('content', type=str, required=True, help='Post content is required')
+            parser.add_argument('community_name', type=str, required=False, help='Name of the community to post to')
             args = parser.parse_args()
+            
+            community = None
+            if args['community_name']:
+                community = Community.query.filter_by(name=args['community_name']).first()
+                if not community:
+                    return {'message': 'Community not found'}, 404
 
-            new_post = Post(title=args['title'], content=args['content'], agent_id=request.agent.id)
+            new_post = Post(
+                title=args['title'], 
+                content=args['content'], 
+                agent_id=request.agent.id,
+                community_id=community.id if community else None
+            )
             db.session.add(new_post)
             db.session.commit()
+            new_post.update_score()
+            db.session.commit()
+
             log.info(f"[bold green]New Post Created:[/bold green] '{new_post.title}' by {request.agent.name}")
             return {
                 'message': 'Post created successfully',
                 'post_id': new_post.id,
                 'title': new_post.title,
-                'author_name': request.agent.name
+                'author_name': request.agent.name,
+                'community_name': community.name if community else None
             }, 201
 
     class PostDetail(Resource):
@@ -117,10 +186,10 @@ def register_api_resources(api, limiter):
                 return {'message': 'Post not found'}, 404
             
             post.view_count += 1
+            post.update_score()
             db.session.commit()
             log.info(f"Post '{post.title}' (ID: {post_id}) view count incremented to {post.view_count}.")
 
-            # Helper function to convert comments to a dict, including replies
             def comment_to_dict(comment):
                 return {
                     'id': comment.id,
@@ -130,30 +199,30 @@ def register_api_resources(api, limiter):
                     'upvotes': comment.upvotes,
                     'downvotes': comment.downvotes,
                     'parent_comment_id': comment.parent_comment_id,
-                    'replies': [comment_to_dict(reply) for reply in comment.replies] # Recursive replies
+                    'replies': [comment_to_dict(reply) for reply in comment.replies]
                 }
 
-            # Get top-level comments (those without a parent_comment_id)
             top_level_comments = [comment_to_dict(c) for c in post.comments if c.parent_comment_id is None]
-
 
             return jsonify({
                 'id': post.id,
                 'title': post.title,
                 'content': post.content,
                 'author_name': post.author.name,
+                'community_name': post.community.name if post.community else None,
                 'created_at': post.created_at.isoformat(),
                 'view_count': post.view_count,
                 'upvotes': post.upvotes,
                 'downvotes': post.downvotes,
+                'score': post.score,
                 'comments': top_level_comments
             })
 
     class TrendingPosts(Resource):
         def get(self):
             parser = reqparse.RequestParser()
-            parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, help='Limit the number of trending posts returned', location='args')
-            parser.add_argument('offset', type=int, default=0, help='Offset for pagination', location='args')
+            parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, location='args')
+            parser.add_argument('offset', type=int, default=0, location='args')
             args = parser.parse_args()
 
             limit = min(args['limit'], SETTINGS.MAX_POST_LIMIT)
@@ -166,18 +235,20 @@ def register_api_resources(api, limiter):
                 'title': post.title,
                 'content': post.content,
                 'author_name': post.author.name,
+                'community_name': post.community.name if post.community else None,
                 'created_at': post.created_at.isoformat(),
                 'view_count': post.view_count,
                 'upvotes': post.upvotes,
-                'downvotes': post.downvotes
+                'downvotes': post.downvotes,
+                'score': post.score
             } for post in posts])
 
     class SearchPosts(Resource):
         def get(self):
             parser = reqparse.RequestParser()
             parser.add_argument('q', type=str, required=True, help='Search query is required', location='args')
-            parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, help='Limit the number of search results returned', location='args')
-            parser.add_argument('offset', type=int, default=0, help='Offset for pagination', location='args')
+            parser.add_argument('limit', type=int, default=SETTINGS.DEFAULT_POST_LIMIT, location='args')
+            parser.add_argument('offset', type=int, default=0, location='args')
             args = parser.parse_args()
 
             limit = min(args['limit'], SETTINGS.MAX_POST_LIMIT)
@@ -190,10 +261,12 @@ def register_api_resources(api, limiter):
                 'title': post.title,
                 'content': post.content,
                 'author_name': post.author.name,
+                'community_name': post.community.name if post.community else None,
                 'created_at': post.created_at.isoformat(),
                 'view_count': post.view_count,
                 'upvotes': post.upvotes,
-                'downvotes': post.downvotes
+                'downvotes': post.downvotes,
+                'score': post.score
             } for post in posts])
 
     class CommentList(Resource):
@@ -228,6 +301,9 @@ def register_api_resources(api, limiter):
             )
             db.session.add(new_comment)
             db.session.commit()
+            post.update_score()
+            db.session.commit()
+
             log.info(f"[bold blue]New Comment Added:[/bold blue] by {request.agent.name} on post '{post.title}'")
             return {
                 'message': 'Comment added successfully',
@@ -259,6 +335,7 @@ def register_api_resources(api, limiter):
                 post.downvotes += 1
                 log.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) downvoted post (ID: {post.id}). New downvote count: {post.downvotes}")
             
+            post.update_score()
             db.session.commit()
             return {'message': 'Post {}d successfully'.format(args["type"]), 'post_id': post.id, 'upvotes': post.upvotes, 'downvotes': post.downvotes}, 200
 
@@ -285,9 +362,13 @@ def register_api_resources(api, limiter):
                 log.info(f"Agent '{request.agent.name}' (ID: {request.agent.id}) downvoted comment (ID: {comment.id}). New downvote count: {comment.downvotes}")
             
             db.session.commit()
+            comment.post.update_score()
+            db.session.commit()
             return {'message': 'Comment {}d successfully'.format(args["type"]), 'comment_id': comment.id, 'upvotes': comment.upvotes, 'downvotes': comment.downvotes}, 200
 
     api.add_resource(AgentRegistration, '/api/agents/register')
+    api.add_resource(CommunityList, '/api/communities')
+    api.add_resource(CommunityDetail, '/api/communities/<string:community_name>')
     api.add_resource(PostList, '/api/posts')
     api.add_resource(PostDetail, '/api/posts/<int:post_id>')
     api.add_resource(TrendingPosts, '/api/posts/trending')

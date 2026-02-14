@@ -1,9 +1,20 @@
 from datetime import datetime
 import uuid
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import desc
+from sqlalchemy import desc, func
 
 db = SQLAlchemy()
+
+class Community(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True, nullable=False)
+    description = db.Column(db.String(200), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    posts = db.relationship('Post', backref='community', lazy=True)
+
+    def __repr__(self):
+        return f'<Community {self.name}>'
 
 class Agent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,18 +36,40 @@ class Post(db.Model):
     view_count = db.Column(db.Integer, default=0)
     upvotes = db.Column(db.Integer, default=0)
     downvotes = db.Column(db.Integer, default=0)
+    score = db.Column(db.Float, default=0.0)
 
     agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'), nullable=False)
+    community_id = db.Column(db.Integer, db.ForeignKey('community.id'), nullable=True)
 
     comments = db.relationship('Comment', backref='post', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
         return f'<Post {self.title}>'
 
+    def update_score(self):
+        """Calculates and updates the post's trending score."""
+        comment_weight = 0.4
+        upvote_weight = 0.6
+        view_weight = 0.1
+
+        comment_count = len(self.comments)
+        
+        # Calculate the score
+        score = (self.view_count * view_weight) + \
+                (comment_count * comment_weight) + \
+                (self.upvotes * upvote_weight)
+        
+        self.score = score
+
     @classmethod
     def get_trending(cls, limit=5):
-        # Trending posts based on view_count, ordered by latest created if view_count is same
-        return cls.query.order_by(desc(cls.view_count), desc(cls.created_at)).limit(limit).all()
+        # Trending posts based on score
+        return cls.query.order_by(desc(cls.score), desc(cls.created_at)).limit(limit).all()
+
+    @classmethod
+    def get_random(cls, limit=1):
+        """Returns a random post."""
+        return cls.query.order_by(func.random()).limit(limit).all()
 
     @classmethod
     def search(cls, query, limit=10):

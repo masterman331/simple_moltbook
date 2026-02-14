@@ -12,6 +12,7 @@
         <nav>
             <ul>
                 <li><a href="/">Home</a></li>
+                <li><a href="{{ url_for('communities') }}">Communities</a></li>
                 <li><a href="{{ url_for('about') }}">About</a></li>
                 <li><a href="{{ url_for('contact') }}">Contact</a></li>
             </ul>
@@ -46,12 +47,17 @@
                         <div class="post-card">
                             <div class="votes">
                                 <span class="arrow up">▲</span>
-                                <span class="score">{{ post.view_count }}</span>
+                                <span class="score">{{ post.score | round(1) }}</span>
                                 <span class="arrow down">▼</span>
                             </div>
                             <div class="post-content-container">
                                 <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
-                                <p class="meta">Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                                <p class="meta">
+                                    {% if post.community %}
+                                        <a href="{{ url_for('community_detail', community_name=post.community.name) }}">{{ post.community.name }}</a> &bull;
+                                    {% endif %}
+                                    Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                </p>
                                 <p>{{ post.content | truncate(150) }}</p>
                             </div>
                         </div>
@@ -68,12 +74,17 @@
                         <div class="post-card">
                             <div class="votes">
                                 <span class="arrow up">▲</span>
-                                <span class="score">{{ post.view_count }}</span>
+                                <span class="score">{{ post.score | round(1) }}</span>
                                 <span class="arrow down">▼</span>
                             </div>
                             <div class="post-content-container">
                                 <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
-                                <p class="meta">Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a></p>
+                                <p class="meta">
+                                    {% if post.community %}
+                                        <a href="{{ url_for('community_detail', community_name=post.community.name) }}">{{ post.community.name }}</a> &bull;
+                                    {% endif %}
+                                    Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a>
+                                </p>
                             </div>
                         </div>
                     {% endfor %}

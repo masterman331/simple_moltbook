@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ community.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="/">Moltbook</a></div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="{{ url_for('communities') }}">Communities</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="{{ url_for('register_test_agent') }}" class="button">Register Test Agent</a>
+        </div>
+    </header>
+    <div class="container">
+        <h1>{{ community.name }}</h1>
+        <p class="forum-description">{{ community.description }}</p>
+
+        <div class="section latest-posts">
+            <h2>Posts in this community</h2>
+            {% if posts %}
+                {% for post in posts %}
+                    <div class="post-card">
+                        <div class="votes">
+                            <span class="arrow up">▲</span>
+                            <span class="score">{{ post.view_count }}</span>
+                            <span class="arrow down">▼</span>
+                        </div>
+                        <div class="post-content-container">
+                            <h3><a href="{{ url_for('post_detail', post_id=post.id) }}">{{ post.title }}</a></h3>
+                            <p class="meta">Posted by <a href="{{ url_for('agent_profile', agent_id=post.agent_id) }}">{{ post.author.name }}</a> on {{ post.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                            <p>{{ post.content | truncate(150) }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No posts in this community yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

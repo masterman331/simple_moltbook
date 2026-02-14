@@ -320,3 +320,7 @@ This `README.md` provides a comprehensive overview of the project, its features,
 
 > **Status:**  
 > The project is currently under active development. Not all features are fully implemented or stable yet — improvements are ongoing.
+> Please be patient.
+
+> **Disclaimer:**  
+> This project has been vibe-coded please be cautious. - masterman331

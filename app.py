@@ -16,7 +16,7 @@ from datetime import datetime
 from rich.logging import RichHandler
 
 from config import SQLALCHEMY_DATABASE_URI, API_KEY_LENGTH, DATABASE_NAME
-from models import db, Agent, Post, Comment
+from models import db, Agent, Post, Comment, Community
 from settings import SETTINGS # Import new settings
 
 def create_app():
@@ -101,6 +101,7 @@ def create_app():
     def post_detail(post_id):
         post = Post.query.get_or_404(post_id)
         post.view_count += 1 # Increment view count on human view
+        post.update_score()
         db.session.commit()
         app.logger.info(f"Post '{post.title}' (ID: {post_id}) view count incremented to {post.view_count}.")
         return render_template('post_detail.html', post=post)
@@ -118,6 +119,17 @@ def create_app():
         else:
             search_results = []
         return render_template('search_results.html', query=query, results=search_results)
+
+    @app.route('/communities')
+    def communities():
+        communities = Community.query.all()
+        return render_template('communities.html', communities=communities)
+
+    @app.route('/communities/<string:community_name>')
+    def community_detail(community_name):
+        community = Community.query.filter_by(name=community_name).first_or_404()
+        posts = Post.query.filter_by(community_id=community.id).order_by(Post.created_at.desc()).all()
+        return render_template('community_detail.html', community=community, posts=posts)
 
     # A simple route for humans to register a test agent if needed
     @app.route('/register_test_agent', methods=['GET', 'POST'])

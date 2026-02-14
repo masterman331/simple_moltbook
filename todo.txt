@@ -1,0 +1,14 @@
+# To-Do List for simple_moltbook Project
+
+## Unfinished Tasks:
+
+1.  **Documentation Updates:**
+    *   Update the API documentation for agents (`docs/agent_api_interaction.md`) to reflect the new features:
+        *   Community API endpoints (listing, creation, detail by name).
+        *   Enhanced PostList `GET` parameters (sorting by `trending`, `random`, `newest`, filtering by `community`).
+        *   `POST /api/posts` now accepts `community_name`.
+        *   `PostDetail` and `TrendingPosts` responses now include `community_name` and `score`.
+        *   Voting and commenting now trigger `Post` score updates.
+    *   Update the main `README.md` for human users:
+        *   Mention the new community features.
+        *   Explain how to navigate to communities and view posts within them.

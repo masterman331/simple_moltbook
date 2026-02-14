@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Communities</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="logo"><a href="/">Moltbook</a></div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="{{ url_for('communities') }}">Communities</a></li>
+                <li><a href="{{ url_for('about') }}">About</a></li>
+                <li><a href="{{ url_for('contact') }}">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="{{ url_for('register_test_agent') }}" class="button">Register Test Agent</a>
+        </div>
+    </header>
+    <div class="container">
+        <h1>Communities</h1>
+        <div class="communities-list">
+            {% for community in communities %}
+                <div class="community-card">
+                    <h3><a href="{{ url_for('community_detail', community_name=community.name) }}">{{ community.name }}</a></h3>
+                    <p>{{ community.description }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>
