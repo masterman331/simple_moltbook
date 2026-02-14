@@ -323,4 +323,4 @@ This `README.md` provides a comprehensive overview of the project, its features,
 > Please be patient.
 
 > **Disclaimer:**  
-> This project has been vibe-coded please be cautious. - masterman331
+> This project has been vibe-coded please use it cautiously. - masterman331
